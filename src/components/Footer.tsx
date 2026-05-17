@@ -75,7 +75,7 @@ export default function Footer() {
                 <p className="text-white/50 text-xs">{t('contact.branches.adaba.location')}</p>
                 <div className="flex items-center gap-3 text-white/70 text-xs">
                   <Phone size={12} className="text-royal-gold" />
-                  <span>+251 990 069 892</span>
+                  <span>+251 920124148</span>
                 </div>
               </div>
               <div className="flex flex-col gap-4">
@@ -90,7 +90,7 @@ export default function Footer() {
                 <p className="text-white/50 text-xs">{t('contact.branches.shashamene.location')}</p>
                 <div className="flex items-center gap-3 text-white/70 text-xs">
                   <Phone size={12} className="text-royal-gold" />
-                  <span>+251 965 254 377</span>
+                  <span>+251 923171212</span>
                 </div>
               </div>
             </div>

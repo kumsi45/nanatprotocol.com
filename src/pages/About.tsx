@@ -41,7 +41,7 @@ export default function About() {
             <div className="relative">
               <div className="h-[700px] grayscale overflow-hidden">
                 <img 
-                  src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80" 
+                  src="pwl1.jpg" 
                   className="w-full h-full object-cover"
                   alt="Prestige Story"
                 />
@@ -109,7 +109,7 @@ export default function About() {
         <div className="max-w-5xl mx-auto px-12 flex flex-col md:flex-row gap-20 items-center">
           <div className="w-full md:w-1/3 aspect-[3/4] glass relative overflow-hidden grayscale grayscale-100 hover:grayscale-0 transition-all duration-700">
              <img 
-               src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80" 
+               src="pwl2.jpg" 
                className="w-full h-full object-cover" 
                alt="CEO"
              />

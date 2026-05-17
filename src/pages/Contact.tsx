@@ -28,11 +28,11 @@ Message: ${formData.message}`;
   const branches = [
     {
       key: 'adaba',
-      phone: '+251 990069892',
+      phone: '+251 920124148',
     },
     {
       key: 'shashamene',
-      phone: '+251 965254377',
+      phone: '+251 923171212',
     }
   ];
 

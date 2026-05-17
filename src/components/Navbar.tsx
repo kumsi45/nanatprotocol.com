@@ -29,12 +29,23 @@ export default function Navbar() {
     <nav className={`fixed top-0 w-full z-50 transition-all duration-700 ${scrolled ? 'bg-luxury-black/90 backdrop-blur-xl border-b border-white/5 py-4' : 'bg-transparent py-10'}`}>
       <div className="max-w-[1440px] mx-auto px-12 flex justify-between items-center">
         <Link to="/" className="flex flex-col group">
-          <span className="text-2xl font-bold tracking-[0.25em] text-royal-gold group-hover:text-white transition-all duration-500">
-            NANAT
-          </span>
-          <span className="text-[9px] tracking-[0.45em] text-white/40 uppercase font-semibold">
-            Protocol
-          </span>
+          <div className="flex items-center gap-3">
+  <img
+    src="/logo.png" 
+    alt="Nanat Protocol"
+    className="h-12 w-auto"
+  />
+
+  <div className="flex flex-col">
+    <span className="text-[#D4AF37] text-2xl font-bold tracking-[0.35em] uppercase">
+      NANAT
+    </span>
+
+    <span className="text-[9px] tracking-[0.45em] text-white/40 uppercase font-semibold">
+      Protocol
+    </span>
+  </div>
+</div>
         </Link>
 
         {/* Desktop Nav */}

@@ -182,7 +182,7 @@ const LUXURY_COLLECTIONS = [
     id: 'car-1',
     title: 'Phantom Ghost Series',
     category: 'car',
-    image: 'https://images.unsplash.com/photo-1631215160533-315182189f74?auto=format&fit=crop&q=90',
+    image: 'car1.png',
     type: 'service',
     price: 'Exclusive'
   },
@@ -190,7 +190,7 @@ const LUXURY_COLLECTIONS = [
     id: 'car-2',
     title: 'Stuttgart Classic Excellence',
     category: 'car',
-    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=90',
+    image: 'car2.png',
     type: 'service',
     price: 'Exclusive'
   },
@@ -228,7 +228,7 @@ const LUXURY_COLLECTIONS = [
     id: 'uniform-1',
     title: 'Professional Corporate Identity',
     category: 'student unifrom',
-    image: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&q=90',
+    image: 'un.png',
     type: 'service',
     price: 'Corporate'
   },
