@@ -27,36 +27,35 @@ export default function Navbar() {
 
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-700 ${scrolled ? 'bg-luxury-black/90 backdrop-blur-xl border-b border-white/5 py-4' : 'bg-transparent py-10'}`}>
-      <div className="max-w-[1440px] mx-auto px-12 flex justify-between items-center">
+      <div className="max-w-[1440px] mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="flex flex-col group">
           <div className="flex items-center gap-3">
-  <img
-    src="/logo.png" 
-    alt="Nanat Protocol"
-    className="h-12 w-auto"
-  />
+            <img
+              src="/logo.png"
+              alt="Nanat Protocol"
+              className="h-12 w-auto"
+            />
 
-  <div className="flex flex-col">
-    <span className="text-[#D4AF37] text-2xl font-bold tracking-[0.35em] uppercase">
-      NANAT
-    </span>
+            <div className="flex flex-col">
+              <span className="text-[#D4AF37] text-2xl font-bold tracking-[0.35em] uppercase">
+                NANAT
+              </span>
 
-    <span className="text-[9px] tracking-[0.45em] text-white/40 uppercase font-semibold">
-      Protocol
-    </span>
-  </div>
-</div>
+              <span className="text-[9px] tracking-[0.45em] text-white/40 uppercase font-semibold">
+                Protocol
+              </span>
+            </div>
+          </div>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-12">
+        <div className="hidden lg:flex items-center gap-12">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`sans-ui text-[10px] hover:text-royal-gold transition-colors relative group tracking-[0.2em] font-bold ${
-                location.pathname === link.path ? 'text-royal-gold' : 'text-white/80'
-              }`}
+              className={`sans-ui text-[10px] hover:text-royal-gold transition-colors relative group tracking-[0.2em] font-bold ${location.pathname === link.path ? 'text-royal-gold' : 'text-white/80'
+                }`}
             >
               {link.name}
               <span className={`absolute -bottom-1 left-0 h-[1px] bg-royal-gold transition-all duration-500 ${location.pathname === link.path ? 'w-full' : 'w-0 group-hover:w-full'}`} />
@@ -64,14 +63,14 @@ export default function Navbar() {
           ))}
           <div className="flex items-center gap-6 pl-6 border-l border-white/10">
             <LanguageSelector />
-            <Link 
-              to="/booking" 
+            <Link
+              to="/booking"
               className="sans-ui text-[10px] text-white/80 hover:text-royal-gold transition-colors tracking-[0.2em] font-bold"
             >
               {t('nav.booking')}
             </Link>
-            <Link 
-              to="/contact" 
+            <Link
+              to="/contact"
               className="px-8 py-3 border border-royal-gold gold-text sans-ui text-[10px] hover:bg-royal-gold hover:text-black transition-all duration-500 tracking-[0.2em] font-bold"
             >
               {t('nav.contact')}
@@ -80,7 +79,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-royal-gold p-2 hover:text-white transition-colors" onClick={() => setIsOpen(!isOpen)}>
+        <button className="lg:hidden text-royal-gold p-2 hover:text-white transition-colors" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X size={26} /> : <Menu size={26} />}
         </button>
       </div>
@@ -100,9 +99,8 @@ export default function Navbar() {
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsOpen(false)}
-                  className={`text-lg font-display tracking-wide ${
-                    location.pathname === link.path ? 'text-royal-gold' : 'text-white'
-                  }`}
+                  className={`text-lg font-display tracking-wide ${location.pathname === link.path ? 'text-royal-gold' : 'text-white'
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -110,18 +108,16 @@ export default function Navbar() {
               <Link
                 to="/booking"
                 onClick={() => setIsOpen(false)}
-                className={`text-lg font-display tracking-wide ${
-                  location.pathname === '/booking' ? 'text-royal-gold' : 'text-white'
-                }`}
+                className={`text-lg font-display tracking-wide ${location.pathname === '/booking' ? 'text-royal-gold' : 'text-white'
+                  }`}
               >
                 {t('nav.booking')}
               </Link>
               <Link
                 to="/contact"
                 onClick={() => setIsOpen(false)}
-                className={`text-lg font-display tracking-wide ${
-                  location.pathname === '/contact' ? 'text-royal-gold' : 'text-white'
-                }`}
+                className={`text-lg font-display tracking-wide ${location.pathname === '/contact' ? 'text-royal-gold' : 'text-white'
+                  }`}
               >
                 {t('nav.contact')}
               </Link>
