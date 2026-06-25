@@ -1,70 +1,69 @@
 import { useTranslation } from '@/node_modules/react-i18next';
-import { Globe } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
+import { ChevronDown } from 'lucide-react';
 
 const LANGUAGES = [
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'am', name: 'አማርኛ', flag: '🇪🇹' },
-  { code: 'om', name: 'Oromo', flag: '🇪🇹' },
+  { code: 'en', name: 'English' },
+  { code: 'am', name: 'አማርኛ' },
+  { code: 'om', name: 'Oromo' },
 ];
 
 export default function LanguageSelector() {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const currentLanguage = LANGUAGES.find(lang => lang.code === i18n.language) || LANGUAGES[0];
+  const ref = useRef<HTMLDivElement>(null);
+  const current = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false);
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const toggleLanguage = (code: string) => {
-    i18n.changeLanguage(code);
-    setIsOpen(false);
-  };
-
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative" ref={ref}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 hover:border-royal-gold/40 transition-all rounded text-white/70 hover:text-white"
-        title="Change Language"
+        onClick={() => setIsOpen(v => !v)}
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm transition-colors"
+        style={{ color: '#5a5a5a', background: isOpen ? '#f0f0f2' : 'transparent', border: '1px solid transparent' }}
+        onMouseEnter={e => { if (!isOpen) (e.currentTarget.style.background = '#f7f7f8'); }}
+        onMouseLeave={e => { if (!isOpen) (e.currentTarget.style.background = 'transparent'); }}
       >
-        <Globe size={16} className="text-royal-gold" />
-        <span className="text-[10px] font-bold uppercase tracking-widest">{currentLanguage.code}</span>
+        <span className="text-xs font-medium uppercase" style={{ letterSpacing: '0.04em' }}>
+          {current.code}
+        </span>
+        <ChevronDown size={12} style={{ transition: 'transform 150ms', transform: isOpen ? 'rotate(180deg)' : 'none' }} />
       </button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            initial={{ opacity: 0, y: -4, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute right-0 mt-2 w-40 bg-luxury-black border border-white/10 shadow-2xl backdrop-blur-xl z-[60]"
+            exit={{ opacity: 0, y: -4, scale: 0.97 }}
+            transition={{ duration: 0.12 }}
+            className="absolute right-0 mt-1 w-36 rounded-lg overflow-hidden z-50"
+            style={{ background: '#ffffff', border: '1px solid #eaeaea', boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}
           >
-            <div className="p-2 flex flex-col gap-1">
-              {LANGUAGES.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => toggleLanguage(lang.code)}
-                  className={`flex items-center justify-between px-3 py-2 text-[11px] tracking-wider transition-colors ${i18n.language === lang.code
-                      ? 'bg-royal-gold text-black font-bold'
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
-                    }`}
-                >
-                  <span>{lang.name}</span>
-                  <span>{lang.flag}</span>
-                </button>
-              ))}
-            </div>
+            {LANGUAGES.map(lang => (
+              <button
+                key={lang.code}
+                onClick={() => { i18n.changeLanguage(lang.code); setIsOpen(false); }}
+                className="w-full text-left px-3 py-2.5 text-sm transition-colors"
+                style={{
+                  color: i18n.language === lang.code ? '#111111' : '#5a5a5a',
+                  fontWeight: i18n.language === lang.code ? 500 : 400,
+                  background: i18n.language === lang.code ? '#f7f7f8' : 'transparent',
+                }}
+                onMouseEnter={e => { if (i18n.language !== lang.code) (e.currentTarget.style.background = '#f7f7f8'); }}
+                onMouseLeave={e => { if (i18n.language !== lang.code) (e.currentTarget.style.background = 'transparent'); }}
+              >
+                {lang.name}
+              </button>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>

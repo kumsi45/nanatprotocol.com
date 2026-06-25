@@ -1,195 +1,202 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'motion/react';
 import { useTranslation } from '@/node_modules/react-i18next';
-import { MapPin, Phone, Mail, Send, Clock, ShieldCheck } from 'lucide-react';
-import { BRANCHES } from '../constants';
+import { MapPin, Phone, Clock, ShieldCheck, Lock, Send, Zap, Mail } from 'lucide-react';
 import SectionHeader from '../components/SectionHeader';
 
 export default function Contact() {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    service: t('contact.services.protocol'),
-    message: ''
+    name: '', channel: '', service: t('contact.services.protocol'), message: '',
   });
+  const [sent, setSent] = useState(false);
 
-  const handleTelegramRedirect = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const text = `Protocol Inquiry:
-Name: ${formData.name}
-Email: ${formData.email}
-Interest: ${formData.service}
-Message: ${formData.message}`;
-
+    const text = `Protocol Request:\nName: ${formData.name}\nChannel: ${formData.channel}\nInterest: ${formData.service}\nRequirements: ${formData.message}`;
     window.open(`https://t.me/nanatprotocol?text=${encodeURIComponent(text)}`, '_blank');
+    setSent(true);
   };
 
   const branches = [
     {
       key: 'adaba',
+      name: t('contact.branches.adaba.name'),
+      location: t('contact.branches.adaba.location'),
+      address: t('contact.branches.adaba.address'),
       phone: '+251 920124148',
+      focus: t('contact.branches.adaba.focus'),
     },
     {
       key: 'shashamene',
+      name: t('contact.branches.shashamene.name'),
+      location: t('contact.branches.shashamene.location'),
+      address: t('contact.branches.shashamene.address'),
       phone: '+251 923171212',
-    }
+      focus: t('contact.branches.shashamene.focus'),
+    },
   ];
 
   return (
-    <div className="pt-32 min-h-screen bg-luxury-black">
-      {/* Hero Header */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-royal-gold/5 blur-[120px] -z-10" />
-        <div className="max-w-7xl mx-auto px-12">
-          <SectionHeader
-            title={t('contact.title')}
-            subtitle={t('contact.subtitle')}
-          />
-        </div>
-      </section>
+    <div style={{ background: '#ffffff', minHeight: '100vh' }}>
+      <div className="container-app page-header">
+        <SectionHeader
+          eyebrow={t('contact.subtitle')}
+          title={t('contact.title')}
+          subtitle="Reach our protocol team directly. We respond within one hour."
+          align="left"
+        />
+      </div>
 
-      <section className="pb-32">
-        <div className="max-w-7xl mx-auto px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+      <div className="container-app" style={{ paddingBottom: 96 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
 
-            {/* Contact Info & Branches */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-16"
-            >
-              <div>
-                <h3 className="sans-ui gold-text text-xs tracking-[0.5em] mb-8">{t('contact.establishment')}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                  {branches.map((branch, i) => (
-                    <div key={i} className="group p-8 luxury-card">
-                      <div className="sans-ui text-royal-gold/40 text-[8px] mb-4 tracking-[0.5em]">{t(`contact.branches.${branch.key}.location`)}</div>
-                      <h4 className="text-2xl italic font-display mb-6 group-hover:text-royal-gold transition-colors">{t(`contact.branches.${branch.key}.name`)}</h4>
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-4 text-white/50 text-sm">
-                          <MapPin size={16} className="text-royal-gold shrink-0 mt-1" />
-                          <span className="leading-relaxed">{t(`contact.branches.${branch.key}.address`)}</span>
-                        </div>
-                        <div className="flex items-center gap-4 text-white/50 text-sm">
-                          <Phone size={16} className="text-royal-gold shrink-0" />
-                          <span>{branch.phone}</span>
-                        </div>
+          {/* LEFT — info (2 cols) */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="lg:col-span-2 flex flex-col gap-6"
+          >
+            {/* Branch cards */}
+            <div>
+              <p className="t-label mb-4">{t('contact.establishment')}</p>
+              <div className="flex flex-col gap-3">
+                {branches.map(branch => (
+                  <div key={branch.key} className="card" style={{ padding: 20 }}>
+                    <p className="t-label mb-2" style={{ color: '#9a9a9a' }}>{branch.location}</p>
+                    <h4 className="t-h3 mb-4">{branch.name}</h4>
+                    <div className="flex flex-col gap-2.5">
+                      <div className="flex items-start gap-2.5 text-sm" style={{ color: '#5a5a5a' }}>
+                        <MapPin size={14} className="shrink-0 mt-0.5" style={{ color: '#0071e3' }} />
+                        <span>{branch.address}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-sm" style={{ color: '#5a5a5a' }}>
+                        <Phone size={14} className="shrink-0" style={{ color: '#0071e3' }} />
+                        <span>{branch.phone}</span>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Hours + Support */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { icon: Clock,       label: t('contact.standardHours'), value: 'Mon–Sat: 08:30–20:00' },
+                { icon: ShieldCheck, label: t('contact.prioritySupport'), value: t('contact.concierge247') },
+              ].map(item => (
+                <div key={item.label} className="card-surface flex gap-3" style={{ padding: 16, borderRadius: 10 }}>
+                  <item.icon size={16} className="shrink-0 mt-0.5" style={{ color: '#0071e3' }} />
+                  <div>
+                    <p className="text-xs font-medium mb-0.5" style={{ color: '#111111' }}>{item.label}</p>
+                    <p className="text-xs" style={{ color: '#9a9a9a' }}>{item.value}</p>
+                  </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Trust */}
+            <div className="divider" />
+            <div className="flex gap-6">
+              {[
+                { icon: Lock,       label: 'Confidential' },
+                { icon: ShieldCheck, label: 'Encrypted' },
+                { icon: Zap,        label: '< 1hr Response' },
+              ].map(item => (
+                <div key={item.label} className="flex flex-col items-center gap-1.5 text-center flex-1">
+                  <item.icon size={16} style={{ color: '#9a9a9a' }} />
+                  <span className="text-xs" style={{ color: '#9a9a9a' }}>{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* RIGHT — form (3 cols) */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="lg:col-span-3"
+          >
+            <div className="card" style={{ padding: 32, borderRadius: 16 }}>
+              <div className="mb-6">
+                <h2 className="t-h2 mb-1">{t('contact.initializeTerminal')}</h2>
+                <p className="t-body text-sm">
+                  Submit your confidential protocol request. A protocol manager will contact you directly.
+                </p>
               </div>
 
-              <div className="pt-12 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full border border-royal-gold/20 flex items-center justify-center text-royal-gold">
-                    <Clock size={20} />
+              {sent ? (
+                <div className="text-center py-12">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+                    style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+                    <ShieldCheck size={22} style={{ color: '#16a34a' }} />
                   </div>
-                  <div>
-                    <div className="sans-ui text-[9px] mb-1">{t('contact.standardHours')}</div>
-                    <div className="text-white/60 text-sm">Mon — Sat: 08:30 - 20:00</div>
-                  </div>
+                  <h3 className="t-h3 mb-2">Message Sent</h3>
+                  <p className="t-body text-sm">We'll contact you within the hour via your preferred channel.</p>
+                  <button onClick={() => setSent(false)} className="btn btn-ghost mt-6 btn-sm">
+                    Send another message
+                  </button>
                 </div>
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-full border border-royal-gold/20 flex items-center justify-center text-royal-gold">
-                    <ShieldCheck size={20} />
-                  </div>
-                  <div>
-                    <div className="sans-ui text-[9px] mb-1">{t('contact.prioritySupport')}</div>
-                    <div className="text-white/60 text-sm">{t('contact.concierge247')}</div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Inquiry Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="absolute -top-10 -right-10 w-40 h-40 border-t border-r border-royal-gold/20 -z-10" />
-              <div className="glass p-12 relative">
-                <h3 className="text-4xl italic font-display mb-4">{t('contact.initializeTerminal')}</h3>
-                <p className="text-white/40 mb-10 text-sm leading-relaxed">{t('contact.formDesc')}</p>
-
-                <form onSubmit={handleTelegramRedirect} className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <label className="sans-ui text-[9px] text-white/30 tracking-[0.3em]">{t('contact.labels.fullName')}</label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              ) : (
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="input-label">{t('contact.labels.fullName')}</label>
+                      <input type="text" required value={formData.name}
+                        onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
                         placeholder={t('contact.placeholders.name')}
-                        className="w-full bg-white/[0.02] border-b border-white/10 p-4 outline-none focus:border-royal-gold transition-colors font-light text-sm"
-                      />
+                        className="input" />
                     </div>
-                    <div className="space-y-2">
-                      <label className="sans-ui text-[9px] text-white/30 tracking-[0.3em]">{t('contact.labels.protocolChannel')}</label>
-                      <input
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder={t('contact.placeholders.email')}
-                        className="w-full bg-white/[0.02] border-b border-white/10 p-4 outline-none focus:border-royal-gold transition-colors font-light text-sm"
-                      />
+                    <div>
+                      <label className="input-label">{t('contact.labels.protocolChannel')}</label>
+                      <input type="text" required value={formData.channel}
+                        onChange={e => setFormData(p => ({ ...p, channel: e.target.value }))}
+                        placeholder="Telegram / Email / Phone"
+                        className="input" />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="sans-ui text-[9px] text-white/30 tracking-[0.3em]">{t('contact.labels.serviceInterest')}</label>
-                    <select
-                      value={formData.service}
-                      onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                      className="w-full bg-white/[0.02] border-b border-white/10 p-4 outline-none focus:border-royal-gold transition-colors font-light text-sm appearance-none"
-                    >
-                      <option className="bg-luxury-black" value={t('contact.services.grooming')}>{t('contact.services.grooming')}</option>
-                      <option className="bg-luxury-black" value={t('contact.services.logistics')}>{t('contact.services.logistics')}</option>
-                      <option className="bg-luxury-black" value={t('contact.services.events')}>{t('contact.services.events')}</option>
-                      <option className="bg-luxury-black" value={t('contact.services.protocol')}>{t('contact.services.protocol')}</option>
-                      <option className="bg-luxury-black" value={t('contact.services.general')}>{t('contact.services.general')}</option>
+                  <div>
+                    <label className="input-label">{t('contact.labels.serviceInterest')}</label>
+                    <select value={formData.service}
+                      onChange={e => setFormData(p => ({ ...p, service: e.target.value }))}
+                      className="input" style={{ cursor: 'pointer' }}>
+                      {[
+                        t('contact.services.grooming'),
+                        t('contact.services.logistics'),
+                        t('contact.services.events'),
+                        t('contact.services.protocol'),
+                        t('contact.services.general'),
+                      ].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="sans-ui text-[9px] text-white/30 tracking-[0.3em]">{t('contact.labels.requirements')}</label>
-                    <textarea
-                      rows={4}
-                      required
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  <div>
+                    <label className="input-label">{t('contact.labels.requirements')}</label>
+                    <textarea rows={5} required value={formData.message}
+                      onChange={e => setFormData(p => ({ ...p, message: e.target.value }))}
                       placeholder={t('contact.placeholders.requirements')}
-                      className="w-full bg-white/[0.02] border-b border-white/10 p-4 outline-none focus:border-royal-gold transition-colors font-light text-sm resize-none"
-                    ></textarea>
+                      className="input" style={{ resize: 'vertical' }} />
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full gold-gradient py-6 text-black sans-ui font-bold shadow-[0_20px_50px_rgba(197,160,89,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 group"
-                  >
-                    <span className="text-[10px]">{t('contact.submit')}</span>
-                    <Send size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  <button type="submit" className="btn btn-primary btn-lg w-full justify-center">
+                    {t('contact.submit')}
+                    <Send size={16} />
                   </button>
-                </form>
 
-                <div className="mt-12 pt-8 border-t border-white/5 flex items-center justify-between opacity-40">
-                  <div className="flex gap-4">
-                    <Mail size={16} />
-                    <span className="text-[10px] sans-ui">contact@nanatprotocol.com</span>
+                  <div className="flex items-center gap-2 justify-center" style={{ color: '#9a9a9a' }}>
+                    <Mail size={12} />
+                    <span className="text-xs">contact@nanatprotocol.com</span>
                   </div>
-                  <div className="text-[10px] sans-ui tracking-tighter">EST 2024</div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+                </form>
+              )}
+            </div>
+          </motion.div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

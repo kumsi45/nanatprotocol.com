@@ -3,181 +3,133 @@ import { useTranslation } from '@/node_modules/react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { DayPicker } from 'react-day-picker';
 import { format } from 'date-fns';
-import { X, Calendar as CalendarIcon, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { X, Clock, CheckCircle } from 'lucide-react';
 import 'react-day-picker/dist/style.css';
 
-interface BookingModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  serviceTitle: string;
-}
+interface Props { isOpen: boolean; onClose: () => void; serviceTitle: string; }
 
-const TIME_SLOTS = [
-  '09:00 AM', '10:00 AM', '11:00 AM',
-  '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
-];
+const TIME_SLOTS = ['09:00 AM','10:00 AM','11:00 AM','02:00 PM','03:00 PM','04:00 PM','05:00 PM'];
 
-export default function BookingModal({ isOpen, onClose, serviceTitle }: BookingModalProps) {
+const calCss = `
+  .rdp { --rdp-cell-size:36px; --rdp-accent-color:#111111; margin:0; font-size:13px; }
+  .rdp-day_selected,.rdp-day_selected:hover { background:#111111!important; color:#fff!important; border-radius:8px; }
+  .rdp-button:hover:not([disabled]):not(.rdp-day_selected) { background:#f7f7f8; border-radius:8px; }
+  .rdp-head_cell { font-size:11px; font-weight:600; letter-spacing:.04em; color:#9a9a9a; text-transform:uppercase; }
+  .rdp-caption_label { font-size:14px; font-weight:600; color:#111111; }
+  .rdp-nav_button { color:#9a9a9a; }
+  .rdp-day { color:#111111; border-radius:8px; }
+  .rdp-day_disabled { color:#d4d4d8!important; }
+`;
+
+export default function BookingModal({ isOpen, onClose, serviceTitle }: Props) {
   const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [step, setStep] = useState<'calendar' | 'success'>('calendar');
 
-  const handleBooking = () => {
-    if (!selectedDate || !selectedTime) return;
+  const confirm = () => { if (selectedDate && selectedTime) setStep('success'); };
 
-    // Simulate booking success
-    setStep('success');
+  const close = () => {
+    onClose();
+    setTimeout(() => { setStep('calendar'); setSelectedTime(null); }, 300);
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 'z-100' flex items-center justify-center p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/80 backdrop-blur-md"
-            onClick={onClose}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="absolute inset-0"
+            style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+            onClick={close}
           />
-
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.96, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-2xl bg-luxury-black border border-royal-gold/20 p-8 md:p-12 glass overflow-hidden"
+            exit={{ opacity: 0, scale: 0.96, y: 12 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="relative w-full max-w-2xl overflow-hidden"
+            style={{ background: '#ffffff', borderRadius: 16, border: '1px solid #eaeaea', boxShadow: '0 24px 80px rgba(0,0,0,0.12)' }}
+            onClick={e => e.stopPropagation()}
           >
-            {/* Decor */}
-            <div className="absolute top-0 right-0 w-32 h-32 border-t border-r border-royal-gold/10 -z-10" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 border-b border-l border-royal-gold/10 -z-10" />
-
-            <button
-              onClick={onClose}
-              className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"
-            >
-              <X size={24} />
-            </button>
-
-            {step === 'calendar' ? (
-              <div className="space-y-8">
-                <div className="text-center">
-                  <span className="sans-ui text-[10px] gold-text tracking-[0.5em] mb-4 block">Reservation Terminal</span>
-                  <h3 className="text-3xl font-display italic mb-2">{serviceTitle}</h3>
-                  <p className="text-white/40 text-sm">Select your preferred date and time for consultation.</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-4">
-                  <div className="calendar-container">
-                    <style>{`
-                      .rdp {
-                        --rdp-cell-size: 40px;
-                        --rdp-accent-color: #C5A059;
-                        --rdp-background-color: rgba(197, 160, 89, 0.1);
-                        margin: 0;
-                      }
-                      .rdp-day_selected, .rdp-day_selected:focus-visible, .rdp-day_selected:hover {
-                        background-color: var(--rdp-accent-color);
-                        color: black;
-                        font-weight: bold;
-                      }
-                      .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-                        background-color: rgba(255, 255, 255, 0.05);
-                      }
-                      .rdp-head_cell {
-                        font-size: 10px;
-                        font-weight: 600;
-                        text-transform: uppercase;
-                        letter-spacing: 0.1em;
-                        color: #C5A059;
-                      }
-                    `}</style>
-                    <DayPicker
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={setSelectedDate}
-                      disabled={{ before: new Date() }}
-                      className="text-white"
-                    />
-                  </div>
-
-                  <div className="space-y-6">
-                    <div>
-                      <div className="flex items-center gap-2 mb-4 text-royal-gold">
-                        <Clock size={16} />
-                        <span className="sans-ui text-[10px] tracking-widest">Select Timeline</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        {TIME_SLOTS.map((time) => (
-                          <button
-                            key={time}
-                            onClick={() => setSelectedTime(time)}
-                            className={`py-3 px-4 text-[10px] sans-ui border transition-all ${selectedTime === time
-                                ? 'bg-royal-gold text-black border-royal-gold'
-                                : 'bg-white/5 border-white/10 text-white/60 hover:border-royal-gold/40'
-                              }`}
-                          >
-                            {time}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="pt-6 border-t border-white/5">
-                      <div className="flex justify-between items-center mb-6">
-                        <div className="text-white/40 text-[10px] sans-ui uppercase">Selected Configuration</div>
-                        <div className="text-right">
-                          <div className="text-white text-sm font-light">
-                            {selectedDate ? format(selectedDate, 'MMMM dd, yyyy') : 'No date selected'}
-                          </div>
-                          <div className="text-royal-gold text-[10px] sans-ui">
-                            {selectedTime || 'Select a time'}
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={handleBooking}
-                        disabled={!selectedDate || !selectedTime}
-                        className="w-full gold-gradient py-5 text-black sans-ui font-bold shadow-[0_20px_50px_rgba(197,160,89,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 disabled:opacity-30 disabled:hover:scale-100"
-                      >
-                        <span className="text-[10px]">Secure Reservation</span>
-                        <Send size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+            {/* Header */}
+            <div className="flex items-center justify-between px-8 pt-7 pb-5" style={{ borderBottom: '1px solid #eaeaea' }}>
+              <div>
+                <p className="text-xs font-medium mb-0.5" style={{ color: '#9a9a9a', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Reservation</p>
+                <h3 className="text-lg font-semibold" style={{ color: '#111111' }}>{serviceTitle}</h3>
               </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center py-12"
+              <button onClick={close} className="w-8 h-8 flex items-center justify-center rounded-md transition-colors"
+                style={{ color: '#9a9a9a' }}
+                onMouseEnter={e => { (e.currentTarget.style.background = '#f7f7f8'); (e.currentTarget.style.color = '#111111'); }}
+                onMouseLeave={e => { (e.currentTarget.style.background = 'transparent'); (e.currentTarget.style.color = '#9a9a9a'); }}
               >
-                <div className="w-20 h-20 rounded-full gold-gradient flex items-center justify-center text-black mx-auto mb-8 shadow-2xl">
-                  <CheckCircle2 size={40} />
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="px-8 py-7">
+              {step === 'calendar' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <style>{calCss}</style>
+                    <DayPicker mode="single" selected={selectedDate} onSelect={setSelectedDate}
+                      disabled={{ before: new Date() }} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <Clock size={14} style={{ color: '#9a9a9a' }} />
+                      <p className="text-xs font-semibold" style={{ color: '#111111', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Select Time</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 mb-6">
+                      {TIME_SLOTS.map(t => (
+                        <button key={t} onClick={() => setSelectedTime(t)}
+                          className="btn btn-sm"
+                          style={{
+                            background: selectedTime === t ? '#111111' : '#f7f7f8',
+                            color:      selectedTime === t ? '#ffffff' : '#5a5a5a',
+                            border:     selectedTime === t ? '1px solid #111111' : '1px solid #eaeaea',
+                            fontSize: 13,
+                          }}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="p-4 rounded-lg mb-5" style={{ background: '#f7f7f8', border: '1px solid #eaeaea' }}>
+                      <p className="text-xs mb-1" style={{ color: '#9a9a9a' }}>Selected</p>
+                      <p className="text-sm font-medium" style={{ color: '#111111' }}>
+                        {selectedDate ? format(selectedDate, 'MMM dd, yyyy') : '—'}{selectedTime ? ` at ${selectedTime}` : ''}
+                      </p>
+                    </div>
+
+                    <button onClick={confirm} disabled={!selectedDate || !selectedTime}
+                      className="btn btn-primary w-full justify-center"
+                      style={{ opacity: (!selectedDate || !selectedTime) ? 0.4 : 1, cursor: (!selectedDate || !selectedTime) ? 'not-allowed' : 'pointer' }}>
+                      Confirm Reservation
+                    </button>
+                  </div>
                 </div>
-                <h3 className="text-4xl font-display italic mb-4 text-white">{t('booking.success.title')}</h3>
-                <div className="mb-8 p-6 bg-white/5 border border-white/10 rounded-sm inline-block min-w-[280px]">
-                  <p className="text-royal-gold sans-ui text-[10px] uppercase tracking-widest mb-2">{t('booking.success.details')}</p>
-                  <p className="text-white text-lg font-light mb-1">
-                    {selectedDate ? format(selectedDate, 'MMMM dd, yyyy') : ''}
+              ) : (
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-center py-8">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+                    style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+                    <CheckCircle size={22} style={{ color: '#16a34a' }} />
+                  </div>
+                  <h3 className="t-h3 mb-2">{t('booking.success.title')}</h3>
+                  <div className="p-4 rounded-lg mb-5 inline-block" style={{ background: '#f7f7f8', border: '1px solid #eaeaea', minWidth: 240 }}>
+                    <p className="text-sm font-medium" style={{ color: '#111111' }}>
+                      {selectedDate ? format(selectedDate, 'MMMM dd, yyyy') : ''}
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ color: '#9a9a9a' }}>at {selectedTime}</p>
+                  </div>
+                  <p className="text-sm mb-6" style={{ color: '#9a9a9a' }}>
+                    {t('booking.success.message', { service: serviceTitle })}
                   </p>
-                  <p className="text-white/60 text-sm">
-                    {t('booking.success.at')} {selectedTime}
-                  </p>
-                </div>
-                <p className="text-white/40 text-sm max-w-sm mx-auto mb-10 leading-relaxed">
-                  {t('booking.success.message', { service: serviceTitle })}
-                </p>
-                <button
-                  onClick={onClose}
-                  className="px-12 py-4 border border-royal-gold gold-text sans-ui text-[10px] hover:bg-royal-gold hover:text-black transition-all"
-                >
-                  {t('booking.success.return')}
-                </button>
-              </motion.div>
-            )}
+                  <button onClick={close} className="btn btn-ghost">{t('booking.success.return')}</button>
+                </motion.div>
+              )}
+            </div>
           </motion.div>
         </div>
       )}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, ChevronRight, Phone } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { Menu, X } from 'lucide-react';
 import { useTranslation } from '@/node_modules/react-i18next';
 import LanguageSelector from './LanguageSelector';
 
@@ -12,129 +12,155 @@ export default function Navbar() {
   const location = useLocation();
 
   const NAV_LINKS = [
-    { name: t('nav.home', 'Home'), path: '/' },
-    { name: t('nav.services', 'Services'), path: '/services' },
-    { name: t('nav.collections', 'Collections'), path: '/collections' },
-    { name: t('nav.pricing', 'Pricing'), path: '/pricing' },
-    { name: t('nav.about', 'About Us'), path: '/about' },
+    { name: t('nav.home'), path: '/' },
+    { name: t('nav.services'), path: '/services' },
+    { name: t('nav.collections'), path: '/collections' },
+    { name: t('nav.pricing'), path: '/pricing' },
+    { name: t('nav.about'), path: '/about' },
   ];
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => { setIsOpen(false); }, [location.pathname]);
+
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-700 ${scrolled ? 'bg-luxury-black/90 backdrop-blur-xl border-b border-white/5 py-4' : 'bg-transparent py-10'}`}>
-      <div className="max-w-[1440px] mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="flex flex-col group">
-          <div className="flex items-center gap-3">
-            <img
-              src="/logo.png"
-              alt="Nanat Protocol"
-              className="h-12 w-auto"
-            />
+    <header
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-200"
+      style={{
+        background: scrolled ? 'rgba(8,8,8,0.9)' : 'rgba(8,8,8,0.56)',
+        borderBottom: scrolled ? '1px solid rgba(212,175,55,0.18)' : '1px solid rgba(212,175,55,0.08)',
+        boxShadow: scrolled ? '0 18px 50px rgba(0,0,0,0.28)' : 'none',
+        backdropFilter: 'blur(18px)',
+      }}
+    >
+      <div className="container-app">
+        <div className="flex items-center justify-between h-14">
 
-            <div className="flex flex-col">
-              <span className="text-[#D4AF37] text-2xl font-bold tracking-[0.35em] uppercase">
-                NANAT
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
+            <img src="/logo.png" alt="Nanat Protocol" className="h-7 w-auto shrink-0" />
+            <div className="flex flex-col leading-none">
+              <span className="text-sm font-semibold tracking-tight" style={{ color: '#f7e9b5', letterSpacing: '-0.01em' }}>
+                Nanat
               </span>
-
-              <span className="text-[9px] tracking-[0.45em] text-white/40 uppercase font-semibold">
+              <span className="text-[10px] font-normal" style={{ color: 'rgba(255,255,255,0.55)' }}>
                 Protocol
               </span>
             </div>
-          </div>
-        </Link>
+          </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-12">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`sans-ui text-[10px] hover:text-royal-gold transition-colors relative group tracking-[0.2em] font-bold ${location.pathname === link.path ? 'text-royal-gold' : 'text-white/80'
-                }`}
-            >
-              {link.name}
-              <span className={`absolute -bottom-1 left-0 h-[1px] bg-royal-gold transition-all duration-500 ${location.pathname === link.path ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-            </Link>
-          ))}
-          <div className="flex items-center gap-6 pl-6 border-l border-white/10">
+          {/* Desktop nav links */}
+          <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
+            {NAV_LINKS.map(link => {
+              const active = location.pathname === link.path;
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="nav-link px-3 py-1.5 rounded-md transition-colors duration-150"
+                  style={{
+                    color: active ? '#f7e9b5' : 'rgba(255,255,255,0.66)',
+                    fontWeight: active ? 500 : 400,
+                    background: active ? 'rgba(212,175,55,0.1)' : 'transparent',
+                    fontSize: 14,
+                  }}
+                  onMouseEnter={e => {
+                    if (!active) (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.06)';
+                  }}
+                  onMouseLeave={e => {
+                    if (!active) (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+                  }}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Right actions */}
+          <div className="hidden lg:flex items-center gap-3">
             <LanguageSelector />
             <Link
               to="/booking"
-              className="sans-ui text-[10px] text-white/80 hover:text-royal-gold transition-colors tracking-[0.2em] font-bold"
+              className="nav-link px-3 py-1.5 rounded-md text-sm"
+              style={{
+                color: location.pathname === '/booking' ? '#f7e9b5' : 'rgba(255,255,255,0.66)',
+                fontWeight: location.pathname === '/booking' ? 500 : 400,
+              }}
             >
               {t('nav.booking')}
             </Link>
             <Link
               to="/contact"
-              className="px-8 py-3 border border-royal-gold gold-text sans-ui text-[10px] hover:bg-royal-gold hover:text-black transition-all duration-500 tracking-[0.2em] font-bold"
+              className="btn btn-sm"
+              style={{ background: '#d4af37', color: '#080808', borderRadius: 6, fontWeight: 700 }}
             >
               {t('nav.contact')}
             </Link>
           </div>
-        </div>
 
-        {/* Mobile Toggle */}
-        <button className="lg:hidden text-royal-gold p-2 hover:text-white transition-colors" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X size={26} /> : <Menu size={26} />}
-        </button>
+          {/* Mobile toggle */}
+          <button
+            className="lg:hidden flex items-center justify-center w-8 h-8 rounded-md transition-colors"
+            style={{ color: '#f7e9b5' }}
+            onClick={() => setIsOpen(v => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={isOpen}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+          >
+            {isOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 w-full bg-luxury-black border-t border-white/5 py-10 px-6 md:hidden shadow-2xl"
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+            style={{
+              background: 'rgba(8,8,8,0.96)',
+              borderTop: '1px solid rgba(212,175,55,0.14)',
+              borderBottom: '1px solid rgba(212,175,55,0.14)',
+              backdropFilter: 'blur(18px)',
+            }}
           >
-            <div className="flex flex-col gap-6">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`text-lg font-display tracking-wide ${location.pathname === link.path ? 'text-royal-gold' : 'text-white'
-                    }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <Link
-                to="/booking"
-                onClick={() => setIsOpen(false)}
-                className={`text-lg font-display tracking-wide ${location.pathname === '/booking' ? 'text-royal-gold' : 'text-white'
-                  }`}
-              >
-                {t('nav.booking')}
-              </Link>
-              <Link
-                to="/contact"
-                onClick={() => setIsOpen(false)}
-                className={`text-lg font-display tracking-wide ${location.pathname === '/contact' ? 'text-royal-gold' : 'text-white'
-                  }`}
-              >
-                {t('nav.contact')}
-              </Link>
-              <div className="pt-6 border-t border-white/10 mt-4 flex flex-col gap-4">
-                <div className="flex justify-between items-center">
-                  <p className="text-xs text-white/50 uppercase tracking-[0.2em]">{t('common.selectLanguage')}</p>
-                  <LanguageSelector />
-                </div>
-                <div className="flex items-center gap-3 text-royal-gold">
-                  <Phone size={16} />
-                  <span className="text-sm font-medium">+251 990 069 892</span>
-                </div>
+            <div className="container-app py-4">
+              <nav className="flex flex-col gap-1">
+                {[...NAV_LINKS,
+                  { name: t('nav.booking'), path: '/booking' },
+                  { name: t('nav.contact'), path: '/contact' },
+                ].map(link => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className="px-3 py-2.5 rounded-md text-sm transition-colors"
+                    style={{
+                      color: location.pathname === link.path ? '#f7e9b5' : 'rgba(255,255,255,0.64)',
+                      fontWeight: location.pathname === link.path ? 500 : 400,
+                      background: location.pathname === link.path ? 'rgba(212,175,55,0.1)' : 'transparent',
+                    }}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </nav>
+              <div className="mt-4 pt-4 flex items-center justify-between" style={{ borderTop: '1px solid rgba(212,175,55,0.14)' }}>
+                <span className="text-xs" style={{ color: 'rgba(255,255,255,0.52)' }}>+251 990 069 892</span>
+                <LanguageSelector />
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </header>
   );
 }

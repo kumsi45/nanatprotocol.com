@@ -1,39 +1,21 @@
 import { Star } from 'lucide-react';
-import { motion } from 'motion/react';
 import { Testimonial } from '../types';
 
-interface Props {
-  testimonial: Testimonial;
-}
+interface Props { testimonial: Testimonial; }
 
 export default function TestimonialCard({ testimonial }: Props) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.6 }}
-      className="p-10 bg-deep-charcoal border border-white/5 relative overflow-hidden"
-    >
-      <div className="absolute top-0 right-0 p-4 opacity-5">
-        <span className="text-8xl font-display">"</span>
-      </div>
-      
-      <div className="flex gap-1 mb-6 text-royal-gold">
+    <div className="card" style={{ padding: 24 }}>
+      <div className="flex gap-0.5 mb-4">
         {[...Array(testimonial.rating)].map((_, i) => (
-          <Star key={i} size={14} fill="currentColor" />
+          <Star key={i} size={13} fill="#111111" strokeWidth={0} />
         ))}
       </div>
-
-      <p className="text-white/80 text-lg md:text-sm font-medium leading-[2] italic mb-8 relative z-10">
-        "{testimonial.content}"
-      </p>
-
-      <div className="flex flex-col">
-        <span className="text-white font-display text-lg tracking-wide uppercase">{testimonial.name}</span>
-        <span className="text-royal-gold text-[10px] uppercase tracking-[0.25em] font-bold mt-1">
-          {testimonial.role}
-        </span>
+      <p className="text-sm mb-5" style={{ color: '#5a5a5a', lineHeight: 1.7 }}>"{testimonial.content}"</p>
+      <div>
+        <p className="text-sm font-semibold" style={{ color: '#111111' }}>{testimonial.name}</p>
+        <p className="text-xs mt-0.5" style={{ color: '#9a9a9a' }}>{testimonial.role}</p>
       </div>
-    </motion.div>
+    </div>
   );
 }

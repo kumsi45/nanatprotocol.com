@@ -1,11 +1,5 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -22,16 +16,13 @@ import Booking from './pages/Booking';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
 }
 
 function AnimatedRoutes() {
-  const location = useLocation();
   return (
-    <Routes location={location}>
+    <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/services" element={<Services />} />
@@ -50,9 +41,9 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="flex flex-col min-h-screen bg-luxury-black overflow-x-hidden">
+      <div className="flex flex-col min-h-screen" style={{ background: '#ffffff', color: '#111111' }}>
         <Navbar />
-        <main className="flex-grow">
+        <main className="grow">
           <AnimatedRoutes />
         </main>
         <Footer />
